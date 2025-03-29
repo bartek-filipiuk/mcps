@@ -178,14 +178,141 @@ webhook_url = os.environ.get("WEBHOOK_URL") or env_vars.get("WEBHOOK_URL")
 
 ## Usage in Windsurf
 
-When using this MCP server with Windsurf IDE, the AI assistant can call the webhook tool using:
+When using this MCP server with Windsurf IDE, the AI assistant will be able to send webhook requests to your configured webhook URL. The webhook functionality will be available to the AI assistant automatically after configuration.
 
-```xml
-<function_calls>
-  <invoke name="mcp2_send_webhook">
-    <parameter name="payload">{"message": "Hello from Windsurf!", "data": {"key": "value"}}</parameter>
-  </invoke>
-</function_calls>
+### Windsurf/Cursor Configuration
+
+For Windsurf or Cursor IDE, add the following configuration to your MCP config file (typically located at `~/.codeium/windsurf/mcp_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "webhook-mcp-server": {
+      "command": "python3",
+      "args": [
+        "/home/bartek/www/mcps/webhook/webhook_server.py"
+      ],
+      "env": {
+        "WEBHOOK_URL": "https://hook.eu2.make.com/xrjy1agher38t9bj1o2vfrv43s41g3rd"
+      }
+    }
+  }
+}
+```
+
+Make sure to replace the webhook URL with your own endpoint if needed.
+
+## Integration with AI Assistant Applications
+
+### Adding to Cherry Studio
+
+To add this webhook MCP server to Cherry Studio or similar AI assistant applications:
+
+1. Open the AI assistant application settings
+2. Navigate to the MCP Server configuration section
+3. Add a new MCP Server with the following details:
+
+   - **Name**: `webhook-mcp-server`
+   - **Description**: `Webhook MCP Server for sending webhook requests`
+   - **Type**: `STDIO` (Standard Input/Output)
+   - **Command**: `python3`
+   - **Arguments**: `/path/to/webhook_server.py` (Full path to the webhook_server.py script)
+   - **Environment Variables**:
+     ```
+     WEBHOOK_URL=https://your-webhook-url.com/endpoint
+     CONFIG_PATH=/path/to/your/config.json
+     ```
+
+4. Save the configuration
+5. The webhook tool will now be available to the AI assistant as `send_webhook`
+
+> **Important**: The default implementation looks for the config file at `/home/bartek/.codeium/windsurf/mcp_config.json`. When using with Cherry Studio or other applications, you should either:
+> 
+> 1. Modify the `config_path` in `webhook_server.py` to point to your application's config file
+> 2. Set the `CONFIG_PATH` environment variable when configuring the MCP server
+> 3. Create a symbolic link from your application's config to the expected path
+> 4. Use the HTTP server version which can read the webhook URL directly from environment variables
+
+### Using the HTTP Server Version
+
+If you're using the HTTP server version (webhook_http_server.py):
+
+1. Start the HTTP server:
+   ```bash
+   python3 webhook_http_server.py
+   ```
+
+2. The server will be available at http://localhost:8000
+
+3. In your AI assistant application, you can make HTTP POST requests to:
+   ```
+   http://localhost:8000/webhook
+   ```
+   
+4. Send JSON payloads in the request body:
+   ```json
+   {
+     "message": "Hello from AI assistant",
+     "data": {
+       "key": "value"
+     }
+   }
+   ```
+
+### Example Integration Code
+
+For custom AI assistant applications, you can use code like this:
+
+```python
+# Python example
+import requests
+
+def send_webhook(payload):
+    """Send a webhook via the webhook HTTP server"""
+    response = requests.post(
+        "http://localhost:8000/webhook",
+        json=payload
+    )
+    return response.json()
+
+# Example usage
+result = send_webhook({
+    "message": "Action triggered by AI assistant",
+    "timestamp": "2025-03-29T21:27:51+01:00",
+    "data": {
+        "action": "user_request",
+        "parameters": {
+            "query": "weather forecast"
+        }
+    }
+})
+print(result)
+```
+
+```javascript
+// JavaScript example
+async function sendWebhook(payload) {
+  const response = await fetch('http://localhost:8000/webhook', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+  return await response.json();
+}
+
+// Example usage
+sendWebhook({
+  message: "Action triggered by AI assistant",
+  timestamp: new Date().toISOString(),
+  data: {
+    action: "user_request",
+    parameters: {
+      query: "weather forecast"
+    }
+  }
+}).then(result => console.log(result));
 ```
 
 ## Troubleshooting

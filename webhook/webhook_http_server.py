@@ -15,7 +15,8 @@ app = FastAPI(title="Webhook HTTP Server")
 
 def read_config():
     """Read the MCP config file to get environment variables"""
-    config_path = "/home/bartek/.codeium/windsurf/mcp_config.json"
+    # Allow config path to be specified via environment variable
+    config_path = os.environ.get("CONFIG_PATH", "/home/bartek/.codeium/windsurf/mcp_config.json")
     try:
         with open(config_path, 'r') as f:
             config = json.load(f)

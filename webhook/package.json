@@ -1,0 +1,30 @@
+{
+  "name": "@bartek-filipiuk/mcp-webhook",
+  "version": "0.1.0",
+  "description": "Webhook MCP Server for sending webhook requests",
+  "main": "index.js",
+  "bin": {
+    "webhook-mcp-server": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mcp",
+    "webhook",
+    "model-context-protocol"
+  ],
+  "author": "Bartek Filipiuk",
+  "license": "MIT",
+  "dependencies": {
+    "mcp": "^0.1.0",
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bartek-filipiuk/mcp-webhook.git"
+  }
+}

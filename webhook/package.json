@@ -25,6 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bartek-filipiuk/mcp-webhook.git"
+    "url": "https://github.com/bartek-filipiuk/mcps.git",
+    "directory": "webhook"
   }
 }

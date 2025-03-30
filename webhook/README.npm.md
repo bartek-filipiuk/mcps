@@ -43,7 +43,7 @@ Add the following to your MCP configuration:
 ## GitHub Repository
 
 This package is available on GitHub at:
-https://github.com/bartek-filipiuk/mcp-webhook
+https://github.com/bartek-filipiuk/mcps/tree/main/webhook
 
 ## License
 
